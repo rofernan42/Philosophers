@@ -12,52 +12,147 @@
 
 #include "philosophers.h"
 
-int		init_philo(t_param *param)
+void	take_fork(t_philo *ph)
 {
-	int i;
+	pthread_mutex_lock(&ph->param->forks[ph->i]);
+	display(ph, 1);
+	//printf("%d\tphilo. %d has taken fork %d\n", timestamp(ph->param->init_time), ph->i, ph->i);
+	pthread_mutex_lock(&ph->param->forks[(ph->i + 1) % ph->param->nb_ph]);
+	display(ph, 1);
+	//printf("%d\tphilo. %d has taken fork %d\n", timestamp(ph->param->init_time), ph->i, (ph->i + 1) % ph->param->nb_ph);
+}
+
+void	eat(t_philo *ph)
+{
+	ph->last_eaten = gettime();
+	ph->is_eating = 1;
+	display(ph, 2);
+	usleep(ph->param->t_eat * 1000);
+	ph->is_eating = 0;
+	ph->eat_count++;
+}
+
+void	leave_fork(t_philo *ph)
+{
+	pthread_mutex_unlock(&ph->param->forks[ph->i]);
+	pthread_mutex_unlock(&ph->param->forks[(ph->i + 1) % ph->param->nb_ph]);
+}
+
+void	sleeping(t_philo *ph)
+{
+	display(ph, 3);
+	usleep(ph->param->t_sleep * 1000);
+}
+
+int		check_end(t_param *param)
+{
+	int	i;
+
+	while (1)
+	{
+		i= 0;
+		while (i < param->nb_ph)
+		{
+			if (!param->philo[i].is_eating \
+			&& gettime() - param->philo[i].last_eaten > param->t_die)
+			{
+				param->philo[i].is_alive = 0;
+				display(&param->philo[i], 5);
+				return (1);
+			}
+			if (!param->philo[i].is_eating \
+			&& param->philo[i].eat_count >= param->nb_eat)
+			{
+				display(&param->philo[i], 6);
+				return (1);
+			}
+			i++;
+		}
+	}
+}
+
+//void	*check_end(void *arg)
+//{
+//	int		i;
+//	t_param	*param;
+//
+//	param = arg;
+//	while (1)
+//	{
+//		i= 0;
+//		while (i < param->nb_ph)
+//		{
+//			if (!param->philo[i].is_eating \
+//			&& gettime() - param->philo[i].last_eaten > param->t_die)
+//			{
+//				param->philo[i].is_alive = 0;
+//				display(&param->philo[i], 5);
+//				return (NULL);
+//			}
+//			i++;
+//		}
+//	}
+//}
+
+//void	*check_end(void *arg)
+//{
+//	int		i;
+//	t_philo	*philo;
+//
+//	philo = arg;
+//	while (philo->alive)
+//	{
+//		if (gettime() - philo->last_eaten > philo->param->t_die)
+//		{
+//			philo->alive = 0;
+//			display(philo, 5);
+//			break ;
+//		}
+//	}
+//	return (NULL);
+//}
+
+void	*actions(void *arg)
+{
+	t_philo		*philo;
+
+	philo = arg;
+	//if (pthread_create(&philo->param->thd, NULL, check_end, arg))
+	//	return (NULL);
+	//pthread_detach(philo->param->thd);
+	//printf("philo %d  %d\n", philo->i, philo->param->t_eat);
+	while (philo->is_alive)
+	{
+		take_fork(philo);
+		eat(philo);
+		leave_fork(philo);
+		sleeping(philo);
+		display(philo, 4);
+	}
+	return (NULL);
+}
+
+
+
+int		start_threads(t_param *param)
+{
+	int			i;
 
 	i = 0;
-	if (!(param->philo = malloc(sizeof(t_param) * param->nb_ph)))
-		return (1);
+	param->init_time = gettime();
 	while (i < param->nb_ph)
 	{
-		param->philo->i = i;
-		param->philo->l_fork = i;
-		param->philo->r_fork = (i + 1) % param->nb_ph;
-		param->philo->time[0] = param->t_die;
-		param->philo->time[1] = param->t_eat;
-		param->philo->time[2] = param->t_sleep;
+		if (pthread_create(&param->thd, NULL, actions, (void*)&param->philo[i]))
+			return (1);
+		pthread_detach(param->thd);
+		//usleep(1000);
 		i++;
 	}
-	return (0);
-}
-
-int		init_forks(t_param *param)
-{
-	int i;
-
-	i = 0;
-	if (!(param->forks = malloc(sizeof(pthread_mutex_t) * param->nb_ph)))
-		return (1);
-	while (i < param->nb_ph)
-		pthread_mutex_init(&param->forks[i++], NULL);
-	return (0);
-}
-
-int		init_param(t_param *param, char **av)
-{
-	param->nb_ph = ft_atoi(av[1]);
-	param->t_die = ft_atoi(av[2]);
-	param->t_eat = ft_atoi(av[3]);
-	param->t_sleep = ft_atoi(av[4]);
-	param->nb_eat = ft_atoi(av[5]);
-	if (param->nb_ph < 2 || param->t_die < 0 || param->t_eat < 0 \
-		|| param->t_sleep < 0 || param->nb_eat < 0)
-		return (1);
-	if (init_philo(param))
-		return (1);
-	if (init_forks(param))
-		return (1);
+	if (check_end(param))
+		return (0);
+	//if (pthread_create(&param->thd, NULL, check_end, (void*)param))
+	//	return (1);
+	pthread_join(param->thd, NULL);
 	return (0);
 }
 
@@ -105,9 +200,22 @@ int		main(int ac, char **av)
 		return (print_error("error: wrong number of arguments\n"));
 	if (init_param(&param, av) == 1)
 		return (print_error("error: error argument value\n"));
-
-	//printf("nb_ph: %d   t_die: %d   t_eat: %d    t_sleep:%d    nb_eat: %d", param.nb_ph, param.t_die, param.t_eat, param.t_sleep, param.nb_eat);
+	if (start_threads(&param) == 1)
+		return (print_error("error: thread\n"));
+	//printf("nb_ph: %d   t_die: %d   t_eat: %d    t_sleep:%d    nb_eat: %d\n", param.nb_ph, param.t_die, param.t_eat, param.t_sleep, param.nb_eat);
 	
+//	int i ;
+
+//	i = 0;
+//	while (i < param.nb_ph)
+//	{
+//		printf("philo %d  %d  %d\n", param.philo[i].i, param.philo[i].l_fork, param.philo[i].r_fork);
+///		i++;
+//	}
+	//printf("initial time : %d\n", param.init_time);
+	//usleep(1000000);
+	//printf("time passed time : %d\n", gettime() - param.init_time);
+
 	
 	return (0);
 }

@@ -23,9 +23,12 @@
 typedef struct		s_philo
 {
 	int				i;
-	int				l_fork;
-	int				r_fork;
-	int				time[3];
+	int				is_alive;
+	int				is_eating;
+	int				last_eaten;
+	int				eat_count;
+	pthread_t		thd;
+	struct s_param	*param;
 }					t_philo;
 
 typedef struct		s_param
@@ -35,8 +38,12 @@ typedef struct		s_param
 	int				t_eat;
 	int				t_sleep;
 	int				nb_eat;
+	int				init_time;
+	int				stop;
 	t_philo			*philo;
+	pthread_t		thd;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	disp;
 }					t_param;
 
 void				ft_putchar_fd(char c, int fd);
@@ -44,5 +51,9 @@ void				ft_putstr_fd(char *s, int fd);
 int					print_error(char *s);
 void				ft_putnbr_fd(int n, int fd);
 int					ft_atoi(const char *str);
+int					gettime(void);
+int					timestamp(int init_time);
+void				display(t_philo *philo, int n);
+int					init_param(t_param *param, char **av);
 
 #endif
