@@ -60,7 +60,7 @@ int		check_end(t_param *param)
 				display(&param->philo[i], 5);
 				return (1);
 			}
-			if (!param->philo[i].is_eating \
+			if (param->nb_eat > 0 \
 			&& param->philo[i].eat_count >= param->nb_eat)
 			{
 				display(&param->philo[i], 6);
