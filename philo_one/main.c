@@ -28,22 +28,23 @@ void	free_all(t_param *param)
 	if (param->philo)
 		free(param->philo);
 }
-
+/*
 void	check_end(t_param *param)
 {
 	int	i;
 	int	count;
 
+	count = 0;
 	while (1)
 	{
 		i= 0;
-		count = 0;
+		//count = 0;
 		while (i < param->nb_ph)
 		{
 			if (!param->philo[i].is_eating \
 			&& gettime() - param->philo[i].last_eaten > param->t_die)
 			{
-				param->philo[i].is_alive = 0;
+				//param->philo[i].is_alive = 0;
 				display(&param->philo[i], 5);
 				return ;
 			}
@@ -59,56 +60,104 @@ void	check_end(t_param *param)
 		}
 	}
 }
+*/
+/*void	*check_end(void *arg)
+{
+	int		i;
+	int		count;
+	t_param	*param;
 
-//void	*check_end(void *arg)
-//{
-//	int		i;
-//	int		count;
-//	t_param	*param;
-//
-//	param = arg;
-//	while (1)
-//	{
-//		i= 0;
-//		while (i < param->nb_ph)
-//		{
-//			if (!param->philo[i].is_eating
-//			&& gettime() - param->philo[i].last_eaten > param->t_die)
-//			{
-//				param->philo[i].is_alive = 0;
-//				display(&param->philo[i], 5);
-//				return (NULL);
-//			}
-//			if (param->nb_eat > 0
-//			&& param->philo[i].eat_count == param->nb_eat)
-//				count++;
-//			if (count == param->nb_ph)
-//			{
-//				display(&param->philo[i], 6);
-//				return (NULL);
-//			}
-//			i++;
-//		}
-//	}
-//}
+	param = arg;
+	while (1)
+	{
+		i= 0;
+		count = 0;
+		while (i < param->nb_ph)
+		{
+			if (!param->philo[i].is_eating \
+			&& gettime() - param->philo[i].last_eaten > param->t_die)
+			{
+				param->philo[i].is_alive = 0;
+				display(&param->philo[i], 5);
+				return (NULL);
+			}
+			if (param->nb_eat > 0 \
+			&& param->philo[i].eat_count == param->nb_eat)
+				count++;
+			if (count == param->nb_ph)
+			{
+				display(&param->philo[i], 6);
+				return (NULL);
+			}
+			i++;
+		}
+	}
+}
+*/
+void	*check_die(void *arg)
+{
+	t_philo	*philo;
 
-//void	*check_end(void *arg)
-//{
-//	int		i;
-//	t_philo	*philo;
-//
-//	philo = arg;
-//	while (philo->alive)
-//	{
-//		if (gettime() - philo->last_eaten > philo->param->t_die)
-//		{
-//			philo->alive = 0;
-//			display(philo, 5);
-//			break ;
-//		}
-//	}
-//	return (NULL);
-//}
+	philo = arg;
+	while (philo->is_alive)
+	{
+		//pthread_mutex_lock(&philo->mut);
+		if (gettime() - philo->last_eaten > philo->param->t_die)
+		{
+			philo->is_alive = 0;
+			display(philo, 5);
+		}
+		//pthread_mutex_unlock(&philo->mut);
+		usleep(1000);
+	}
+	return (NULL);
+}
+
+void	*check_count(void *arg)
+{
+	int		i;
+	int		count;
+	t_param	*param;
+
+	param = arg;
+	count = 0;
+	while (count < param->nb_eat)
+	{
+		i = 0;
+		while (i < param->nb_ph)
+		{
+			if (param->philo[i].eat_count >= param->nb_eat)
+			{
+				//pthread_mutex_lock(&param->philo[i].mut);
+				count++;
+			}
+			i++;
+		}
+	}
+	display(&param->philo[i], 6);
+	return (NULL);
+}
+
+void		*actions(void *arg)
+{
+	t_philo		*philo;
+	pthread_t	thd;
+
+	philo = arg;
+	philo->last_eaten = gettime();
+	if (pthread_create(&thd, NULL, check_die, arg))
+		return ((void*)1);
+	//pthread_detach(thd);
+	while (1)
+	{
+		take_fork(philo);
+		eat(philo);
+		leave_fork(philo);
+		sleeping(philo);
+		display(philo, 4);
+	}
+	return (NULL);
+}
 
 int		start_threads(t_param *param)
 {
@@ -120,11 +169,15 @@ int		start_threads(t_param *param)
 	{
 		if (pthread_create(&param->thd, NULL, actions, (void*)&param->philo[i]))
 			return (1);
-		pthread_detach(param->thd);
+		//pthread_detach(param->thd);
 		usleep(100);
 		i++;
 	}
-	check_end(param);
+	if (param->nb_eat > 0)
+	{
+		check_count(param);
+	}
+	//check_end(param);
 	//if (pthread_create(&param->thd, NULL, check_end, (void*)param))
 	//	return (1);
 	pthread_join(param->thd, NULL);
@@ -168,8 +221,8 @@ int		main(int ac, char **av)
 		i++;
 	}
 
-	pthread_mutex_lock(&param.ph_dead);
-	pthread_mutex_unlock(&param.ph_dead);
+	//pthread_mutex_lock(&param.ph_dead);
+	//pthread_mutex_unlock(&param.ph_dead);
 	//free_all(&param);
 	return (0);
 }

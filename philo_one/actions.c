@@ -12,17 +12,17 @@
 
 #include "philosophers.h"
 
-static void	take_fork(t_philo *ph)
+void	take_fork(t_philo *ph)
 {
-	pthread_mutex_lock(&ph->param->forks[ph->i]);
-	//pthread_mutex_lock(&ph->param->forks[ph->l_fork]);
+	//pthread_mutex_lock(&ph->param->forks[ph->i]);
+	pthread_mutex_lock(&ph->param->forks[ph->l_fork]);
 	display(ph, 1);
-	pthread_mutex_lock(&ph->param->forks[(ph->i + 1) % ph->param->nb_ph]);
-	//pthread_mutex_lock(&ph->param->forks[ph->r_fork]);
+	//pthread_mutex_lock(&ph->param->forks[(ph->i + 1) % ph->param->nb_ph]);
+	pthread_mutex_lock(&ph->param->forks[ph->r_fork]);
 	display(ph, 1);
 }
 
-static void	eat(t_philo *ph)
+void	eat(t_philo *ph)
 {
 	ph->is_eating = 1;
 	display(ph, 2);
@@ -30,36 +30,19 @@ static void	eat(t_philo *ph)
 	usleep(ph->param->t_eat * 1000);
 	ph->is_eating = 0;
 	ph->eat_count++;
+	//pthread_mutex_unlock(&ph->mut);
 }
 
-static void	leave_fork(t_philo *ph)
+void	leave_fork(t_philo *ph)
 {
-	pthread_mutex_unlock(&ph->param->forks[ph->i]);
-	pthread_mutex_unlock(&ph->param->forks[(ph->i + 1) % ph->param->nb_ph]);
+	//pthread_mutex_unlock(&ph->param->forks[ph->i]);
+	pthread_mutex_unlock(&ph->param->forks[ph->l_fork]);
+	//pthread_mutex_unlock(&ph->param->forks[(ph->i + 1) % ph->param->nb_ph]);
+	pthread_mutex_unlock(&ph->param->forks[ph->r_fork]);
 }
 
-static void	sleeping(t_philo *ph)
+void	sleeping(t_philo *ph)
 {
 	display(ph, 3);
 	usleep(ph->param->t_sleep * 1000);
-}
-
-void		*actions(void *arg)
-{
-	t_philo		*philo;
-
-	philo = arg;
-	//if (pthread_create(&philo->param->thd, NULL, check_end, arg))
-	//	return (NULL);
-	//pthread_detach(philo->param->thd);
-	//printf("philo %d  %d\n", philo->i, philo->param->t_eat);
-	while (philo->is_alive)
-	{
-		take_fork(philo);
-		eat(philo);
-		leave_fork(philo);
-		sleeping(philo);
-		display(philo, 4);
-	}
-	return (NULL);
 }

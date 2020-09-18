@@ -23,9 +23,10 @@ static void	init_philo(t_param *param)
 		param->philo[i].is_alive = 1;
 		param->philo[i].is_eating = 0;
 		param->philo[i].eat_count = 0;
-		//param->philo[i].l_fork = i;
-		//param->philo[i].r_fork = (i + 1) % param->nb_ph;
+		param->philo[i].l_fork = i;
+		param->philo[i].r_fork = (i + 1) % param->nb_ph;
 		param->philo[i].param = param;
+		pthread_mutex_init(&param->philo[i].mut, NULL);
 		i++;
 	}
 }
