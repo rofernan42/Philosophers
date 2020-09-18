@@ -17,12 +17,17 @@ void	free_all(t_param *param)
 	int i;
 
 	i = 0;
+	//pthread_mutex_unlock(&param->disp);
+	//pthread_mutex_unlock(&param->ph_dead);
 	pthread_mutex_destroy(&param->disp);
 	pthread_mutex_destroy(&param->ph_dead);
 	if (param->forks)
 	{
 		while (i < param->nb_ph)
+		{
+			//pthread_mutex_unlock(&param->forks[i]);
 			pthread_mutex_destroy(&param->forks[i++]);
+		}
 		free(param->forks);
 	}
 	if (param->philo)
@@ -101,14 +106,12 @@ void	*check_die(void *arg)
 	philo = arg;
 	while (philo->is_alive)
 	{
-		//pthread_mutex_lock(&philo->mut);
 		if (gettime() - philo->last_eaten > philo->param->t_die)
 		{
 			philo->is_alive = 0;
 			display(philo, 5);
 		}
-		//pthread_mutex_unlock(&philo->mut);
-		usleep(1000);
+		usleep(100);
 	}
 	return (NULL);
 }
@@ -121,20 +124,18 @@ void	*check_count(void *arg)
 
 	param = arg;
 	count = 0;
-	while (count < param->nb_eat)
+	while (count < param->nb_ph)
 	{
 		i = 0;
+		count = 0;
 		while (i < param->nb_ph)
 		{
 			if (param->philo[i].eat_count >= param->nb_eat)
-			{
-				//pthread_mutex_lock(&param->philo[i].mut);
 				count++;
-			}
 			i++;
 		}
 	}
-	display(&param->philo[i], 6);
+	display(&param->philo[0], 6);
 	return (NULL);
 }
 
@@ -148,7 +149,7 @@ void		*actions(void *arg)
 	if (pthread_create(&thd, NULL, check_die, arg))
 		return ((void*)1);
 	//pthread_detach(thd);
-	while (1)
+	while (!philo->param->stop)
 	{
 		take_fork(philo);
 		eat(philo);
@@ -162,6 +163,7 @@ void		*actions(void *arg)
 int		start_threads(t_param *param)
 {
 	long int	i;
+	//pthread_t	thd;
 
 	i = 0;
 	param->init_time = gettime();
@@ -169,13 +171,15 @@ int		start_threads(t_param *param)
 	{
 		if (pthread_create(&param->thd, NULL, actions, (void*)&param->philo[i]))
 			return (1);
-		//pthread_detach(param->thd);
+		pthread_detach(param->thd);
 		usleep(100);
 		i++;
 	}
 	if (param->nb_eat > 0)
 	{
-		check_count(param);
+		if (pthread_create(&param->thd, NULL, check_count, (void*)param))
+			return (1);
+		//pthread_detach(param->thd);
 	}
 	//check_end(param);
 	//if (pthread_create(&param->thd, NULL, check_end, (void*)param))
@@ -213,7 +217,6 @@ int		main(int ac, char **av)
 	//printf("initial time : %d\n", param.init_time);
 	//usleep(1000000);
 	//printf("time passed time : %d\n", gettime() - param.init_time);
-	
 	int i = 0;
 	while (i < param.nb_ph)
 	{
@@ -223,6 +226,6 @@ int		main(int ac, char **av)
 
 	//pthread_mutex_lock(&param.ph_dead);
 	//pthread_mutex_unlock(&param.ph_dead);
-	//free_all(&param);
+	free_all(&param);
 	return (0);
 }
