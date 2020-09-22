@@ -124,7 +124,7 @@ void	*check_count(void *arg)
 
 	param = arg;
 	count = 0;
-	while (count < param->nb_ph)
+	while (count < param->nb_ph && !param->stop)
 	{
 		i = 0;
 		count = 0;
@@ -148,7 +148,7 @@ void		*actions(void *arg)
 	philo->last_eaten = gettime();
 	if (pthread_create(&thd, NULL, check_die, arg))
 		return ((void*)1);
-	//pthread_detach(thd);
+	pthread_detach(thd);
 	while (!philo->param->stop)
 	{
 		take_fork(philo);
@@ -171,7 +171,7 @@ int		start_threads(t_param *param)
 	{
 		if (pthread_create(&param->thd, NULL, actions, (void*)&param->philo[i]))
 			return (1);
-		pthread_detach(param->thd);
+		//pthread_detach(param->thd);
 		usleep(100);
 		i++;
 	}
@@ -217,12 +217,12 @@ int		main(int ac, char **av)
 	//printf("initial time : %d\n", param.init_time);
 	//usleep(1000000);
 	//printf("time passed time : %d\n", gettime() - param.init_time);
-	int i = 0;
-	while (i < param.nb_ph)
-	{
-		printf("philo %d  eat_count %d\n", param.philo[i].i+1, param.philo[i].eat_count);
-		i++;
-	}
+//	int i = 0;
+//	while (i < param.nb_ph)
+//	{
+//		printf("philo %d  eat_count %d\n", param.philo[i].i+1, param.philo[i].eat_count);
+//		i++;
+//	}
 
 	//pthread_mutex_lock(&param.ph_dead);
 	//pthread_mutex_unlock(&param.ph_dead);
