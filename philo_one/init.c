@@ -26,7 +26,7 @@ static void	init_philo(t_param *param)
 		param->philo[i].l_fork = i;
 		param->philo[i].r_fork = (i + 1) % param->nb_ph;
 		param->philo[i].param = param;
-		pthread_mutex_init(&param->philo[i].mut, NULL);
+		//pthread_mutex_init(&param->philo[i].mut, NULL);
 		//pthread_mutex_lock(&param->philo[i].mut);
 		i++;
 	}
@@ -40,7 +40,7 @@ static void	init_forks(t_param *param)
 	while (i < param->nb_ph)
 		pthread_mutex_init(&param->forks[i++], NULL);
 	pthread_mutex_init(&param->disp, NULL);
-	pthread_mutex_init(&param->ph_dead, NULL);
+	//pthread_mutex_init(&param->ph_dead, NULL);
 }
 
 int			init_param(t_param *param, char **av)

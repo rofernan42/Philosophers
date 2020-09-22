@@ -20,7 +20,7 @@ void	free_all(t_param *param)
 	//pthread_mutex_unlock(&param->disp);
 	//pthread_mutex_unlock(&param->ph_dead);
 	pthread_mutex_destroy(&param->disp);
-	pthread_mutex_destroy(&param->ph_dead);
+	//pthread_mutex_destroy(&param->ph_dead);
 	if (param->forks)
 	{
 		while (i < param->nb_ph)
