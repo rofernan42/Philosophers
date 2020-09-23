@@ -53,7 +53,6 @@ typedef struct		s_param
 void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char *s, int fd);
 int					ft_strlen(char const *s);
-int					print_error(char *s);
 void				ft_putnbr_fd(int n, int fd);
 int					ft_atoi(const char *str);
 int					gettime(void);
@@ -64,6 +63,7 @@ void				take_fork(t_philo *ph);
 void				eat(t_philo *ph);
 void				leave_fork(t_philo *ph);
 void				sleeping(t_philo *ph);
-//void				*actions(void *arg);
+void				free_all(t_param *param);
+int					print_error(char *s, t_param *param);
 
 #endif

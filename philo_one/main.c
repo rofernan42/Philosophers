@@ -12,27 +12,6 @@
 
 #include "philosophers.h"
 
-void	free_all(t_param *param)
-{
-	int i;
-
-	i = 0;
-	//pthread_mutex_unlock(&param->disp);
-	//pthread_mutex_unlock(&param->ph_dead);
-	pthread_mutex_destroy(&param->disp);
-	//pthread_mutex_destroy(&param->ph_dead);
-	if (param->forks)
-	{
-		while (i < param->nb_ph)
-		{
-			//pthread_mutex_unlock(&param->forks[i]);
-			pthread_mutex_destroy(&param->forks[i++]);
-		}
-		free(param->forks);
-	}
-	if (param->philo)
-		free(param->philo);
-}
 /*
 void	check_end(t_param *param)
 {
@@ -192,18 +171,13 @@ int		main(int ac, char **av)
 {
 	t_param	param;
 
+	memset(&param, 0, sizeof(t_param));
 	if (ac < 5 || ac > 6)
-		return (print_error("error: wrong number of arguments\n"));
+		return (print_error("error: wrong number of arguments\n", NULL));
 	if (init_param(&param, av) == 1)
-	{
-		free_all(&param);
-		return (print_error("error: error argument value\n"));
-	}
+		return (print_error("error: error argument value\n", &param));
 	if (start_threads(&param) == 1)
-	{
-		free_all(&param);
-		return (print_error("error: thread\n"));
-	}
+		return (print_error("error: thread\n", &param));
 	//printf("nb_ph: %d   t_die: %d   t_eat: %d    t_sleep:%d    nb_eat: %d\n", param.nb_ph, param.t_die, param.t_eat, param.t_sleep, param.nb_eat);
 	
 //	int i ;

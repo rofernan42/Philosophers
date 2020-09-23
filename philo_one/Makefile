@@ -14,6 +14,7 @@ NAME		=	philo_one
 
 SRCS		=	actions.c \
 				display.c \
+				exit.c \
 				init.c \
 				main.c \
 				time.c \

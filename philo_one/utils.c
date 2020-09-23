@@ -35,12 +35,6 @@ int		ft_strlen(char const *s)
 	return (i);
 }
 
-int		print_error(char *s)
-{
-	ft_putstr_fd(s, 1);
-	return (1);
-}
-
 void	ft_putnbr_fd(int n, int fd)
 {
 	unsigned int temp;
