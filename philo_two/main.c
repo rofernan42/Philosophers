@@ -85,7 +85,8 @@ void	*check_die(void *arg)
 	philo = arg;
 	while (philo->is_alive)
 	{
-		if (gettime() - philo->last_eaten > philo->param->t_die)
+		if (!philo->is_eating \
+		&& gettime() - philo->last_eaten > philo->param->t_die)
 		{
 			philo->is_alive = 0;
 			display(philo, 5);
@@ -175,7 +176,7 @@ int		main(int ac, char **av)
 	if (ac < 5 || ac > 6)
 		return (print_error("error: wrong number of arguments\n", NULL));
 	if (init_param(&param, av) == 1)
-		return (print_error("error: error argument value\n", &param));
+		return (print_error("error: problem in initialization\n", &param));
 	if (start_threads(&param) == 1)
 		return (print_error("error: thread\n", &param));
 	//printf("nb_ph: %d   t_die: %d   t_eat: %d    t_sleep:%d    nb_eat: %d\n", param.nb_ph, param.t_die, param.t_eat, param.t_sleep, param.nb_eat);
@@ -191,12 +192,12 @@ int		main(int ac, char **av)
 	//printf("initial time : %d\n", param.init_time);
 	//usleep(1000000);
 	//printf("time passed time : %d\n", gettime() - param.init_time);
-//	int i = 0;
-//	while (i < param.nb_ph)
-//	{
-//		printf("philo %d  eat_count %d\n", param.philo[i].i+1, param.philo[i].eat_count);
-//		i++;
-//	}
+	int i = 0;
+	while (i < param.nb_ph)
+	{
+		printf("philo %d  eat_count %d\n", param.philo[i].i+1, param.philo[i].eat_count);
+		i++;
+	}
 
 	free_all(&param);
 	return (0);

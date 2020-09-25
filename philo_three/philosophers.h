@@ -21,6 +21,9 @@
 # include <sys/time.h>
 # include <fcntl.h>
 # include <semaphore.h>
+# include <sys/types.h>
+# include <sys/wait.h>
+# include <signal.h>
 
 typedef struct		s_philo
 {
@@ -29,6 +32,7 @@ typedef struct		s_philo
 	int				is_eating;
 	int				last_eaten;
 	int				eat_count;
+	pid_t			pid;
 	struct s_param	*param;
 }					t_philo;
 
@@ -42,7 +46,7 @@ typedef struct		s_param
 	int				init_time;
 	int				stop;
 	t_philo			*philo;
-	pthread_t		thd;
+	pid_t			*pid;
 	sem_t			*forks;
 	sem_t			*disp;
 }					t_param;

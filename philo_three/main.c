@@ -96,38 +96,56 @@ void	*check_die(void *arg)
 	return (NULL);
 }
 
+//void	*check_count(void *arg)
+//{
+//	int		i;
+//	int		count;
+//	t_param	*param;
+//
+//	param = arg;
+//	count = 0;
+//	while (count < param->nb_ph && !param->stop)
+//	{
+//		i = 0;
+//		count = 0;
+//		while (i < param->nb_ph)
+//		{
+//			if (param->philo[i].eat_count >= param->nb_eat)
+//				count++;
+//			i++;
+//		}
+//	}
+//	display(&param->philo[0], 6);
+//	return (NULL);
+//}
+
 void	*check_count(void *arg)
 {
-	int		i;
-	int		count;
-	t_param	*param;
+	t_philo	*philo;
 
-	param = arg;
-	count = 0;
-	while (count < param->nb_ph && !param->stop)
+	philo = arg;
+	while (!philo->param->stop)
 	{
-		i = 0;
-		count = 0;
-		while (i < param->nb_ph)
-		{
-			if (param->philo[i].eat_count >= param->nb_eat)
-				count++;
-			i++;
-		}
+		if (philo->eat_count >= philo->param->nb_eat)
+			display(philo, 6);
 	}
-	display(&param->philo[0], 6);
 	return (NULL);
 }
 
-void		*actions(void *arg)
+
+static int	actions(t_philo *philo)
 {
-	t_philo		*philo;
 	pthread_t	thd;
 
-	philo = arg;
 	philo->last_eaten = gettime();
-	if (pthread_create(&thd, NULL, check_die, arg))
-		return ((void*)1);
+	if (pthread_create(&thd, NULL, check_die, (void*)philo))
+		return (1);
+	if (philo->param->nb_eat > 0)
+	{
+		if (pthread_create(&thd, NULL, check_count, (void*)philo))
+			return (1);
+		//pthread_detach(param->thd);
+	}
 	pthread_detach(thd);
 	while (!philo->param->stop)
 	{
@@ -137,34 +155,61 @@ void		*actions(void *arg)
 		sleeping(philo);
 		display(philo, 4);
 	}
-	return (NULL);
+	return (0);
 }
 
-int		start_threads(t_param *param)
+//int		start_threads(t_param *param)
+//{
+//	long int	i;
+//	//pthread_t	thd;
+//
+//	i = 0;
+//	param->init_time = gettime();
+//	while (i < param->nb_ph)
+//	{
+//		if (pthread_create(&param->thd, NULL, actions, (void*)&param->philo[i]))
+//			return (1);
+//		//pthread_detach(param->thd);
+//		usleep(100);
+//		i++;
+//	}
+//	if (param->nb_eat > 0)
+//	{
+//		if (pthread_create(&param->thd, NULL, check_count, (void*)param))
+//			return (1);
+//		//pthread_detach(param->thd);
+//	}
+//	//check_end(param);
+//	//if (pthread_create(&param->thd, NULL, check_end, (void*)param))
+//	//	return (1);
+//	pthread_join(param->thd, NULL);
+//	return (0);
+//}
+
+int		start_forks(t_param *param)
 {
-	long int	i;
-	//pthread_t	thd;
+	int			i;
+	//int status;
+	//pid_t wpid;
 
 	i = 0;
 	param->init_time = gettime();
 	while (i < param->nb_ph)
 	{
-		if (pthread_create(&param->thd, NULL, actions, (void*)&param->philo[i]))
+		if (!(param->philo[i].pid = fork()))
+		{
+			actions(&param->philo[i]);
+			//kill(param->philo[i].pid, SIGKILL);
+			exit(0);
+		}
+		else if (param->philo[i].pid < 0)
 			return (1);
-		//pthread_detach(param->thd);
 		usleep(100);
 		i++;
 	}
-	if (param->nb_eat > 0)
-	{
-		if (pthread_create(&param->thd, NULL, check_count, (void*)param))
-			return (1);
-		//pthread_detach(param->thd);
-	}
-	//check_end(param);
-	//if (pthread_create(&param->thd, NULL, check_end, (void*)param))
-	//	return (1);
-	pthread_join(param->thd, NULL);
+	//if (param->nb_eat <= 0)
+	waitpid(-1, NULL, 0);
+	//while ((wpid = waitpid(-1, &status, 0)) > 0);
 	return (0);
 }
 
@@ -177,7 +222,7 @@ int		main(int ac, char **av)
 		return (print_error("error: wrong number of arguments\n", NULL));
 	if (init_param(&param, av) == 1)
 		return (print_error("error: problem in initialization\n", &param));
-	if (start_threads(&param) == 1)
+	if (start_forks(&param) == 1)
 		return (print_error("error: thread\n", &param));
 	//printf("nb_ph: %d   t_die: %d   t_eat: %d    t_sleep:%d    nb_eat: %d\n", param.nb_ph, param.t_die, param.t_eat, param.t_sleep, param.nb_eat);
 	
@@ -192,15 +237,13 @@ int		main(int ac, char **av)
 	//printf("initial time : %d\n", param.init_time);
 	//usleep(1000000);
 	//printf("time passed time : %d\n", gettime() - param.init_time);
-//	int i = 0;
-//	while (i < param.nb_ph)
-//	{
-//		printf("philo %d  eat_count %d\n", param.philo[i].i+1, param.philo[i].eat_count);
-//		i++;
-//	}
+	//int i = 0;
+	//while (i < param.nb_ph)
+	//{
+	//	printf("philo %d  eat_count %d\n", param.philo[i].i+1, param.philo[i].eat_count);
+	//	i++;
+	//}
 
-	//pthread_mutex_lock(&param.ph_dead);
-	//pthread_mutex_unlock(&param.ph_dead);
 	free_all(&param);
 	return (0);
 }

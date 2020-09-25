@@ -53,6 +53,7 @@ int			init_param(t_param *param, char **av)
 		return (1);
 	if (!(param->philo = malloc(sizeof(t_param) * param->nb_ph)))
 		return (1);
+	//param->pid = malloc(sizeof(pid_t) * param->nb_ph);
 	init_philo(param);
 	return (init_sem(param));
 }
