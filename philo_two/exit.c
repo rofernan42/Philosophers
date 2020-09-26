@@ -14,12 +14,26 @@
 
 void	free_all(t_param *param)
 {
+	int		i;
+	char	*sem_name;
+
+	i = 0;
+	sem_name = NULL;
 	if (param)
 	{
 		sem_unlink("sem_fork");
 		sem_unlink("sem_disp");
 		if (param->philo)
+		{
+			while (i < param->nb_ph)
+			{
+				sem_name = sem_n("sem_p_eat", i++);
+				sem_unlink(sem_name);
+				free(sem_name);
+				sem_name = NULL;
+			}
 			free(param->philo);
+		}
 	}
 }
 
