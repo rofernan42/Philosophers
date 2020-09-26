@@ -43,7 +43,6 @@ void		display(t_philo *philo, int n)
 		if (n == 5 || n == 6)
 		{
 			philo->param->stop = 1;
-			//printf("philo %d  eat_count %d\n", philo->i+1, philo->eat_count);
 			exit(0);
 		}
 	}

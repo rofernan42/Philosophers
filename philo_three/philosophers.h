@@ -46,7 +46,6 @@ typedef struct		s_param
 	int				init_time;
 	int				stop;
 	t_philo			*philo;
-	pid_t			*pid;
 	sem_t			*forks;
 	sem_t			*disp;
 }					t_param;
