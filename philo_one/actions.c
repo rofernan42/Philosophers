@@ -22,7 +22,6 @@ void	take_fork(t_philo *ph)
 
 void	eat(t_philo *ph)
 {
-	
 	ph->is_eating = 1;
 	display(ph, 2);
 	ph->last_eaten = gettime();

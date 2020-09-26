@@ -78,7 +78,7 @@ static void	*actions(void *arg)
 
 static int	start_threads(t_param *param)
 {
-	long int	i;
+	int	i;
 
 	i = 0;
 	param->init_time = gettime();
