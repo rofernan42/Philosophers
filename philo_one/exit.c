@@ -27,7 +27,12 @@ void	free_all(t_param *param)
 		}
 		pthread_mutex_destroy(&param->disp);
 		if (param->philo)
+		{
+			i = 0;
+			while (i < param->nb_ph)
+				pthread_mutex_destroy(&param->philo[i++].p_eat);
 			free(param->philo);
+		}
 	}
 }
 

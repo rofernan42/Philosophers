@@ -29,8 +29,7 @@ typedef struct		s_philo
 	int				eat_count;
 	int				l_fork;
 	int				r_fork;
-	//pthread_t		thd;
-	//pthread_mutex_t	mut;
+	pthread_mutex_t	p_eat;
 	struct s_param	*param;
 }					t_philo;
 
@@ -47,7 +46,6 @@ typedef struct		s_param
 	pthread_t		thd;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	disp;
-	//pthread_mutex_t	ph_dead;
 }					t_param;
 
 void				ft_putchar_fd(char c, int fd);
