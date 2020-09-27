@@ -12,9 +12,9 @@
 
 #include "philosophers.h"
 
-static void	init_philo(t_param *param)
+static int	init_philo(t_param *param)
 {
-	int i;
+	int		i;
 
 	i = 0;
 	while (i < param->nb_ph)
@@ -24,18 +24,24 @@ static void	init_philo(t_param *param)
 		param->philo[i].is_eating = 0;
 		param->philo[i].eat_count = 0;
 		param->philo[i].param = param;
+		if (create_sem(&param->philo[i], i))
+			return (1);
 		i++;
 	}
+	return (0);
 }
 
 static int	init_sem(t_param *param)
 {
 	sem_unlink("sem_fork");
 	sem_unlink("sem_disp");
+	sem_unlink("sem_order");
 	if ((param->forks = sem_open("sem_fork", O_CREAT, 0644, param->nb_ph)) \
 	== SEM_FAILED)
 		return (1);
 	if ((param->disp = sem_open("sem_disp", O_CREAT, 0644, 1)) == SEM_FAILED)
+		return (1);
+	if ((param->order = sem_open("sem_order", O_CREAT, 0644, 1)) == SEM_FAILED)
 		return (1);
 	return (0);
 }
@@ -53,6 +59,7 @@ int			init_param(t_param *param, char **av)
 		return (1);
 	if (!(param->philo = malloc(sizeof(t_param) * param->nb_ph)))
 		return (1);
-	init_philo(param);
+	if (init_philo(param))
+		return (1);
 	return (init_sem(param));
 }

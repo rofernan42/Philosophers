@@ -112,23 +112,3 @@ int			main(int ac, char **av)
 	free_all(&param);
 	return (0);
 }
-
-/*
-**printf("nb_ph: %d   t_die: %d   t_eat: %d    t_sleep:%d    nb_eat: %d\n", param.nb_ph, param.t_die, param.t_eat, param.t_sleep, param.nb_eat);
-**int i ;
-**i = 0;
-**while (i < param.nb_ph)
-**{
-**	printf("philo %d  %d  %d\n", param.philo[i].i, param.philo[i].l_fork, param.philo[i].r_fork);
-**		i++;
-**}
-**printf("initial time : %d\n", param.init_time);
-**usleep(1000000);
-**printf("time passed time : %d\n", gettime() - param.init_time);
-**int i = 0;
-**while (i < param.nb_ph)
-**{
-**	printf("philo %d  eat_count %d\n", param.philo[i].i+1, param.philo[i].eat_count);
-**	i++;
-**}
-*/

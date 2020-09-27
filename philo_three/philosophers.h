@@ -32,6 +32,8 @@ typedef struct		s_philo
 	int				is_eating;
 	int				last_eaten;
 	int				eat_count;
+	sem_t			*p_eat;
+	sem_t			*sem_eat_count;
 	pid_t			pid;
 	struct s_param	*param;
 }					t_philo;
@@ -48,6 +50,7 @@ typedef struct		s_param
 	t_philo			*philo;
 	sem_t			*forks;
 	sem_t			*disp;
+	sem_t			*order;
 }					t_param;
 
 void				ft_putchar_fd(char c, int fd);
@@ -65,5 +68,7 @@ void				leave_fork(t_philo *ph);
 void				sleeping(t_philo *ph);
 void				free_all(t_param *param);
 int					print_error(char *s, t_param *param);
+char				*sem_n(char *str, int j);
+int					create_sem(t_philo *philo, int i);
 
 #endif

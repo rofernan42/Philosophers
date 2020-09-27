@@ -14,10 +14,12 @@
 
 void	take_fork(t_philo *ph)
 {
+	sem_wait(ph->param->order);
 	sem_wait(ph->param->forks);
 	display(ph, 1);
 	sem_wait(ph->param->forks);
 	display(ph, 1);
+	sem_post(ph->param->order);
 }
 
 void	eat(t_philo *ph)
@@ -25,9 +27,12 @@ void	eat(t_philo *ph)
 	ph->is_eating = 1;
 	display(ph, 2);
 	ph->last_eaten = gettime();
+	sem_wait(ph->p_eat);
 	usleep(ph->param->t_eat * 1000);
 	ph->is_eating = 0;
 	ph->eat_count++;
+	sem_post(ph->p_eat);
+	sem_post(ph->sem_eat_count);
 }
 
 void	leave_fork(t_philo *ph)
