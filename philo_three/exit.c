@@ -22,12 +22,10 @@ static void	free_sem(t_param *param)
 	while (i < param->nb_ph)
 	{
 		sem_name = sem_n("sem_p_eat", i);
-		printf("%s\n", sem_name);
 		sem_unlink(sem_name);
 		free(sem_name);
 		sem_name = NULL;
 		sem_name = sem_n("sem_eat_count", i);
-		printf("%s\n", sem_name);
 		sem_unlink(sem_name);
 		free(sem_name);
 		sem_name = NULL;
@@ -39,6 +37,7 @@ void		free_all(t_param *param)
 {
 	int i;
 
+	printf("test\n");
 	i = 0;
 	if (param)
 	{

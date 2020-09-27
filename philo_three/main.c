@@ -46,6 +46,7 @@ static void	*check_count(void *arg)
 		count++;
 	}
 	display(&param->philo[0], 6);
+	usleep(100);
 	return (NULL);
 }
 
@@ -93,9 +94,22 @@ static int	start_forks(t_param *param)
 			return (1);
 		pthread_detach(thd);
 	}
-	waitpid(-1, NULL, 0);
+	waitpid(0, NULL, 0);
 	return (0);
 }
+
+// static int	thread_count(t_param *param)
+// {
+// 	pthread_t	thd;
+
+// 	if (param->nb_eat > 0)
+// 	{
+// 		if (pthread_create(&thd, NULL, &check_count, (void*)param))
+// 			return (1);
+// 		pthread_detach(thd);
+// 	}
+// 	return (0);
+// }
 
 int			main(int ac, char **av)
 {

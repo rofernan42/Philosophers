@@ -133,12 +133,12 @@ int			main(int ac, char **av)
 		return (print_error("error: problem in initialization\n", &param));
 	if (start_threads(&param) == 1)
 		return (print_error("error: thread\n", &param));
-//int i = 0;
-//while (i < param.nb_ph)
-//{
-//	printf("philo %d  eat_count %d\n", param.philo[i].i+1, param.philo[i].eat_count);
-//	i++;
-//}
+// int i = 0;
+// while (i < param.nb_ph)
+// {
+// 	printf("philo %d  eat_count %d\n", param.philo[i].i+1, param.philo[i].eat_count);
+// 	i++;
+// }
 	free_all(&param);
 	return (0);
 }
