@@ -23,6 +23,7 @@ void	free_all(t_param *param)
 	{
 		sem_unlink("sem_fork");
 		sem_unlink("sem_disp");
+		sem_unlink("sem_order");
 		if (param->philo)
 		{
 			while (i < param->nb_ph)

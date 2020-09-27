@@ -50,11 +50,30 @@ static void	*check_count(void *arg)
 				count++;
 			i++;
 		}
-		usleep(100);
 	}
 	display(&param->philo[0], 6);
 	return (NULL);
 }
+
+// static void	*check_count(void *arg)
+// {
+// 	int		count;
+// 	int		i;
+// 	t_param	*param;
+
+// 	param = arg;
+// 	count = 0;
+// 	while (count < param->nb_eat && !param->stop)
+// 	{
+// 		i = 0;
+// 		while (i < param->nb_ph)
+// 			sem_wait(param->philo[i++].sem_eat_count);
+// 		count++;
+// 	}
+// 	display(&param->philo[0], 6);
+// 	return (NULL);
+// }
+
 
 static void	*actions(void *arg)
 {

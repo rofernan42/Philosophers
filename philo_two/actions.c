@@ -32,6 +32,7 @@ void	eat(t_philo *ph)
 	ph->is_eating = 0;
 	ph->eat_count++;
 	sem_post(ph->p_eat);
+	//sem_post(ph->sem_eat_count);
 }
 
 void	leave_fork(t_philo *ph)

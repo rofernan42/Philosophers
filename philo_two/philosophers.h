@@ -30,6 +30,7 @@ typedef struct		s_philo
 	int				last_eaten;
 	int				eat_count;
 	sem_t			*p_eat;
+	//sem_t			*sem_eat_count;
 	struct s_param	*param;
 }					t_philo;
 
@@ -66,5 +67,6 @@ void				sleeping(t_philo *ph);
 void				free_all(t_param *param);
 int					print_error(char *s, t_param *param);
 char				*sem_n(char *str, int j);
+int					create_sem(t_philo *philo, int i);
 
 #endif

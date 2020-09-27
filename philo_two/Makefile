@@ -17,6 +17,7 @@ SRCS		=	actions.c \
 				exit.c \
 				init.c \
 				main.c \
+				sem.c \
 				time.c \
 				utils.c
 

@@ -31,9 +31,6 @@ static void	display_action(int n)
 void		display(t_philo *philo, int n)
 {
 	sem_wait(philo->param->disp);
-	//pthread_mutex_lock(&philo->param->disp2);
-	//if (philo->param->stop)
-	//	return ;
 	if (!philo->param->stop)
 	{
 		ft_putnbr_fd(timestamp(philo->param->init_time), 1);
@@ -52,5 +49,4 @@ void		display(t_philo *philo, int n)
 		//printf("%d\n", philo->param->stop);
 	}
 	sem_post(philo->param->disp);
-	//pthread_mutex_unlock(&philo->param->disp2);
 }
