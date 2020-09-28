@@ -51,6 +51,7 @@ typedef struct		s_param
 	sem_t			*forks;
 	sem_t			*disp;
 	sem_t			*order;
+	pid_t			pid_count;
 }					t_param;
 
 void				ft_putchar_fd(char c, int fd);

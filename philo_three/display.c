@@ -31,20 +31,14 @@ static void	display_action(int n)
 void		display(t_philo *philo, int n)
 {
 	sem_wait(philo->param->disp);
-	if (!philo->param->stop)
+	ft_putnbr_fd(timestamp(philo->param->init_time), 1);
+	if (n != 6)
 	{
-		ft_putnbr_fd(timestamp(philo->param->init_time), 1);
-		if (n != 6)
-		{
-			ft_putstr_fd("\tphilo. ", 1);
-			ft_putnbr_fd(philo->i + 1, 1);
-		}
-		display_action(n);
-		if (n == 5 || n == 6)
-		{
-			philo->param->stop = 1;
-			exit(0);
-		}
+		ft_putstr_fd("\tphilo. ", 1);
+		ft_putnbr_fd(philo->i + 1, 1);
 	}
+	display_action(n);
+	if (n == 5 || n == 6)
+		exit(0);
 	sem_post(philo->param->disp);
 }

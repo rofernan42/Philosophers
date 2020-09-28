@@ -44,6 +44,8 @@ void		free_all(t_param *param)
 		sem_unlink("sem_fork");
 		sem_unlink("sem_disp");
 		sem_unlink("sem_order");
+		if (param->nb_eat > 0)
+			kill(param->pid_count, SIGKILL);
 		if (param->philo)
 		{
 			while (i < param->nb_ph)

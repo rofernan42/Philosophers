@@ -19,26 +19,26 @@ static void	*check_die(void *arg)
 	philo = arg;
 	while (philo->is_alive)
 	{
+		sem_wait(philo->p_eat);
 		if (!philo->is_eating \
 		&& gettime() - philo->last_eaten > philo->param->t_die)
 		{
 			philo->is_alive = 0;
 			display(philo, 5);
 		}
+		sem_post(philo->p_eat);
 		usleep(100);
 	}
 	return (NULL);
 }
 
-static void	*check_count(void *arg)
+static void	check_count(t_param *param)
 {
 	int		count;
 	int		i;
-	t_param	*param;
 
-	param = arg;
 	count = 0;
-	while (count < param->nb_eat && !param->stop)
+	while (count < param->nb_eat)
 	{
 		i = 0;
 		while (i < param->nb_ph)
@@ -46,8 +46,6 @@ static void	*check_count(void *arg)
 		count++;
 	}
 	display(&param->philo[0], 6);
-	usleep(100);
-	return (NULL);
 }
 
 static int	actions(t_philo *philo)
@@ -58,7 +56,7 @@ static int	actions(t_philo *philo)
 	if (pthread_create(&thd, NULL, &check_die, (void*)philo))
 		return (1);
 	pthread_detach(thd);
-	while (!philo->param->stop)
+	while (1)
 	{
 		take_fork(philo);
 		eat(philo);
@@ -72,17 +70,13 @@ static int	actions(t_philo *philo)
 static int	start_forks(t_param *param)
 {
 	int			i;
-	pthread_t	thd;
 
 	i = 0;
 	param->init_time = gettime();
 	while (i < param->nb_ph)
 	{
 		if (!(param->philo[i].pid = fork()))
-		{
 			actions(&param->philo[i]);
-			exit(0);
-		}
 		else if (param->philo[i].pid < 0)
 			return (1);
 		usleep(100);
@@ -90,26 +84,12 @@ static int	start_forks(t_param *param)
 	}
 	if (param->nb_eat > 0)
 	{
-		if (pthread_create(&thd, NULL, &check_count, (void*)param))
-			return (1);
-		pthread_detach(thd);
+		if (!(param->pid_count = fork()))
+			check_count(param);
 	}
-	waitpid(0, NULL, 0);
+	waitpid(-1, NULL, 0);
 	return (0);
 }
-
-// static int	thread_count(t_param *param)
-// {
-// 	pthread_t	thd;
-
-// 	if (param->nb_eat > 0)
-// 	{
-// 		if (pthread_create(&thd, NULL, &check_count, (void*)param))
-// 			return (1);
-// 		pthread_detach(thd);
-// 	}
-// 	return (0);
-// }
 
 int			main(int ac, char **av)
 {
