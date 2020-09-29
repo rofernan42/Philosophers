@@ -37,7 +37,6 @@ void		free_all(t_param *param)
 {
 	int i;
 
-	printf("test\n");
 	i = 0;
 	if (param)
 	{

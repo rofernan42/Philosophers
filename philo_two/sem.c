@@ -48,7 +48,7 @@ int		create_sem(t_philo *philo, int i)
 	// if (!(sem_name = sem_n("sem_eat_count", i)))
 	// 	return (1);
 	// sem_unlink(sem_name);
-	// if ((philo->sem_eat_count = sem_open(sem_name, O_CREAT, 0644, 0)) \
+	// if ((philo->sem_eat_count = sem_open(sem_name, O_CREAT, 0644, 0)) 
 	// == SEM_FAILED)
 	// 	return (1);
 	// free(sem_name);
