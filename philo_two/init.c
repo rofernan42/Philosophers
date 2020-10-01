@@ -19,6 +19,7 @@ static int	init_philo(t_param *param)
 	i = 0;
 	while (i < param->nb_ph)
 	{
+		memset(&param->philo[i], 0, sizeof(t_philo));
 		param->philo[i].i = i;
 		param->philo[i].is_alive = 1;
 		param->philo[i].is_eating = 0;

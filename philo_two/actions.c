@@ -24,10 +24,10 @@ void	take_fork(t_philo *ph)
 
 void	eat(t_philo *ph)
 {
+	sem_wait(ph->p_eat);
 	ph->is_eating = 1;
 	display(ph, 2);
 	ph->last_eaten = gettime();
-	sem_wait(ph->p_eat);
 	usleep(ph->param->t_eat * 1000);
 	ph->is_eating = 0;
 	ph->eat_count++;

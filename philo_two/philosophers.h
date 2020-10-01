@@ -31,6 +31,7 @@ typedef struct		s_philo
 	int				eat_count;
 	sem_t			*p_eat;
 	//sem_t			*sem_eat_count;
+	// pthread_t		thd_ph;
 	struct s_param	*param;
 }					t_philo;
 
