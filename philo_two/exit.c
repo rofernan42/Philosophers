@@ -25,10 +25,12 @@ void	free_all(t_param *param)
 		{
 			while (i < param->nb_ph)
 			{
-				sem_name = sem_n("sem_p_eat", i++);
+				sem_name = sem_n("sem_p_eat", i);
 				sem_unlink(sem_name);
 				free(sem_name);
 				sem_name = NULL;
+				// memset(&param->philo[i], 0, sizeof(t_philo));
+				i++;
 			}
 			free(param->philo);
 			param->philo = NULL;

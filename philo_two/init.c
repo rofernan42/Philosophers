@@ -55,6 +55,7 @@ int			init_param(t_param *param, char **av)
 	param->t_sleep = ft_atoi(av[4]);
 	param->nb_eat = ft_atoi(av[5]);
 	param->stop = 0;
+	param->count = 0;
 	if (param->nb_ph < 2 || param->t_die < 20 || param->t_eat < 20 \
 	|| param->t_sleep < 20 || param->nb_eat < 0)
 		return (1);

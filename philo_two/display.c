@@ -45,8 +45,12 @@ static char	*display_action(int n)
 
 void		display(t_philo *philo, int n)
 {
+	char *str;
+
+	// str = strdup(display_action(n));
 	sem_wait(philo->param->disp);
-	printf("TEST   %d\n", philo->i+1);
+	str = display_action(n);
+	printf("TEST   %d  stop: %d\n", philo->i+1, philo->param->stop);
 	if (!philo->param->stop)
 	{
 		ft_putnbr_fd(timestamp(philo->param->init_time), 1);
@@ -55,14 +59,14 @@ void		display(t_philo *philo, int n)
 			write(1, "\tphilo. ", 8);
 			ft_putnbr_fd(philo->i + 1, 1);
 		}
-		write(1, display_action(n), ft_strlen(display_action(n)));
+		write(1, str, ft_strlen(str));
 		if (n == 5 || n == 6)
 		{
 			philo->param->stop = 1;
-			//usleep(1000000);
-			//return ;
 		}
 		//printf("%d\n", philo->param->stop);
 	}
+	// free(str);
+	str = NULL;
 	sem_post(philo->param->disp);
 }

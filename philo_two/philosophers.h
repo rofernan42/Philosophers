@@ -31,7 +31,7 @@ typedef struct		s_philo
 	int				eat_count;
 	sem_t			*p_eat;
 	//sem_t			*sem_eat_count;
-	// pthread_t		thd_ph;
+	pthread_t		thd_ph;
 	struct s_param	*param;
 }					t_philo;
 
@@ -44,12 +44,12 @@ typedef struct		s_param
 	int				nb_eat;
 	int				init_time;
 	int				stop;
+	int				count;
 	t_philo			*philo;
 	pthread_t		thd;
 	sem_t			*forks;
 	sem_t			*disp;
 	sem_t			*order;
-	//pthread_mutex_t	disp2;
 }					t_param;
 
 void				ft_putchar_fd(char c, int fd);
