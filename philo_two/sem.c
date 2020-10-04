@@ -36,22 +36,10 @@ char	*sem_n(char *str, int j)
 
 int		create_sem(t_philo *philo, int i)
 {
-	char	*sem_name;
-
-	if (!(sem_name = sem_n("sem_p_eat", i)))
+	if (!(philo->sem_name = sem_n("sem_p_eat", i)))
 		return (1);
-	sem_unlink(sem_name);
-	if ((philo->p_eat = sem_open(sem_name, O_CREAT, 0644, 1)) == SEM_FAILED)
+	sem_unlink(philo->sem_name);
+	if ((philo->p_eat = sem_open(philo->sem_name, O_CREAT, 0644, 1)) == SEM_FAILED)
 		return (1);
-	free(sem_name);
-	sem_name = NULL;
-	// if (!(sem_name = sem_n("sem_eat_count", i)))
-	// 	return (1);
-	// sem_unlink(sem_name);
-	// if ((philo->sem_eat_count = sem_open(sem_name, O_CREAT, 0644, 0)) 
-	// == SEM_FAILED)
-	// 	return (1);
-	// free(sem_name);
-	// sem_name = NULL;
 	return (0);
 }

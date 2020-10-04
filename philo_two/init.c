@@ -36,13 +36,10 @@ static int	init_sem(t_param *param)
 {
 	sem_unlink("sem_fork");
 	sem_unlink("sem_disp");
-	sem_unlink("sem_order");
 	if ((param->forks = sem_open("sem_fork", O_CREAT, 0644, param->nb_ph)) \
 	== SEM_FAILED)
 		return (1);
 	if ((param->disp = sem_open("sem_disp", O_CREAT, 0644, 1)) == SEM_FAILED)
-		return (1);
-	if ((param->order = sem_open("sem_order", O_CREAT, 0644, 1)) == SEM_FAILED)
 		return (1);
 	return (0);
 }
@@ -63,6 +60,5 @@ int			init_param(t_param *param, char **av)
 		return (1);
 	if (init_philo(param))
 		return (1);
-	//pthread_mutex_init(&param->disp2, NULL);
 	return (init_sem(param));
 }

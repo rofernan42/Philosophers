@@ -22,13 +22,12 @@ static void	*check_die(void *arg)
 		sem_wait(philo->p_eat);
 		if (gettime() - philo->last_eaten > philo->param->t_die)
 		{
-			// philo->is_alive = 0;
 			display(philo, 5);
-			// sem_post(philo->p_eat);
+			sem_post(philo->p_eat);
 			return (NULL);
 		}
 		sem_post(philo->p_eat);
-		usleep(1000);
+		usleep(100);
 	}
 	return (NULL);
 }
@@ -45,7 +44,7 @@ static void	*check_die(void *arg)
 // 		while (i < param->nb_ph)
 // 		{
 // 			sem_wait(param->philo[i].p_eat);
-// 			if (!param->philo[i].is_eating \
+// 			if (!param->philo[i].is_eating 
 // 			&& gettime() - param->philo[i].last_eaten > param->t_die)
 // 			{
 // 				display(&param->philo[i], 5);
@@ -149,26 +148,27 @@ static int	start_threads(t_param *param)
 {
 	int			i;
 	pthread_t	thd;
-	// pthread_t	thd2;
-	// pthread_t	thd3;
 
 	i = 0;
-	// thd3 = NULL;
 	param->init_time = gettime();
 	while (i < param->nb_ph)
 	{
-		// if (pthread_create(&param->thd, NULL, &actions, (void*)&param->philo[i]))
-			// return (1);
 		if (pthread_create(&thd, NULL, &actions, &param->philo[i]))
 			return (1);
 		pthread_detach(thd);
-		// if (pthread_create(&thd2, NULL, &check_die, (void*)&param->philo[i]))
 		if (pthread_create(&param->philo[i].thd_ph, NULL, &check_die, (void*)&param->philo[i]))
 			return (1);
-		// pthread_detach(thd2);
 		usleep(1000);
 		i++;
 	}
+	// i = 0;
+	// while (i < param->nb_ph)
+	// {
+	// 	if (pthread_create(&param->philo[i].thd_ph, NULL, &check_die, (void*)&param->philo[i]))
+	// 		return (1);
+	// 	i++;
+	// 	usleep(1000);
+	// }
 	// if (pthread_create(&thd2, NULL, &check_die, (void*)param))
 		// return (1);
 	// pthread_detach(thd2);
@@ -182,7 +182,7 @@ static int	start_threads(t_param *param)
 		//pthread_join(param->thd, NULL);
 	// }
 	// pthread_join(param->thd, NULL);
-	// pthread_join(thd1, NULL);
+	// pthread_join(thd, NULL);
 	// pthread_join(thd2, NULL);
 	// if (param->nb_eat > 0)
 		// pthread_join(thd3, NULL);
@@ -209,26 +209,12 @@ int			main(int ac, char **av)
 // 	printf("philo %d  eat_count %d\n", param.philo[i].i+1, param.philo[i].eat_count);
 // 	i++;
 // }
+//  int i = 0;
+// while (i < param.nb_ph)
+// {
+// 	printf("%s\n", param.philo[i].sem_name);
+// 	i++;
+// }
 	free_all(&param);
 	return (0);
 }
-
-/*
-**printf("nb_ph: %d   t_die: %d   t_eat: %d    t_sleep:%d    nb_eat: %d\n", param.nb_ph, param.t_die, param.t_eat, param.t_sleep, param.nb_eat);
-**int i ;
-**i = 0;
-**while (i < param.nb_ph)
-**{
-**	printf("philo %d  %d  %d\n", param.philo[i].i, param.philo[i].l_fork, param.philo[i].r_fork);
-**		i++;
-**}
-**printf("initial time : %d\n", param.init_time);
-**usleep(1000000);
-**printf("time passed time : %d\n", gettime() - param.init_time);
-**int i = 0;
-**while (i < param.nb_ph)
-**{
-**	printf("philo %d  eat_count %d\n", param.philo[i].i+1, param.philo[i].eat_count);
-**	i++;
-**}
-*/

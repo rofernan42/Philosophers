@@ -29,8 +29,8 @@ typedef struct		s_philo
 	int				is_eating;
 	int				last_eaten;
 	int				eat_count;
+	char			*sem_name;
 	sem_t			*p_eat;
-	//sem_t			*sem_eat_count;
 	pthread_t		thd_ph;
 	struct s_param	*param;
 }					t_philo;
@@ -46,10 +46,8 @@ typedef struct		s_param
 	int				stop;
 	int				count;
 	t_philo			*philo;
-	pthread_t		thd;
 	sem_t			*forks;
 	sem_t			*disp;
-	sem_t			*order;
 }					t_param;
 
 void				ft_putchar_fd(char c, int fd);

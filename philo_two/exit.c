@@ -15,21 +15,17 @@
 void	free_all(t_param *param)
 {
 	int		i;
-	char	*sem_name;
 
 	i = 0;
-	sem_name = NULL;
 	if (param)
 	{
 		if (param->philo)
 		{
 			while (i < param->nb_ph)
 			{
-				sem_name = sem_n("sem_p_eat", i);
-				sem_unlink(sem_name);
-				free(sem_name);
-				sem_name = NULL;
-				// memset(&param->philo[i], 0, sizeof(t_philo));
+				sem_unlink(param->philo[i].sem_name);
+				free(param->philo[i].sem_name);
+				param->philo[i].sem_name = NULL;
 				i++;
 			}
 			free(param->philo);
@@ -37,7 +33,6 @@ void	free_all(t_param *param)
 		}
 		sem_unlink("sem_fork");
 		sem_unlink("sem_disp");
-		sem_unlink("sem_order");
 	}
 }
 
