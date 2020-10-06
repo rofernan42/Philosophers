@@ -20,8 +20,6 @@ static void	init_philo(t_param *param)
 	while (i < param->nb_ph)
 	{
 		param->philo[i].i = i;
-		param->philo[i].is_alive = 1;
-		param->philo[i].is_eating = 0;
 		param->philo[i].eat_count = 0;
 		param->philo[i].l_fork = i;
 		param->philo[i].r_fork = (i + 1) % param->nb_ph;
@@ -49,6 +47,7 @@ int			init_param(t_param *param, char **av)
 	param->t_sleep = ft_atoi(av[4]);
 	param->nb_eat = ft_atoi(av[5]);
 	param->stop = 0;
+	param->count = 0;
 	if (param->nb_ph < 2 || param->t_die < 20 || param->t_eat < 20 \
 	|| param->t_sleep < 20 || param->nb_eat < 0)
 		return (1);

@@ -17,14 +17,15 @@ static void	*check_die(void *arg)
 	t_philo	*philo;
 
 	philo = arg;
-	while (philo->is_alive)
+	while (!philo->param->stop)
 	{
 		pthread_mutex_lock(&philo->p_eat);
-		if (!philo->is_eating \
-		&& gettime() - philo->last_eaten > philo->param->t_die)
+		if (!philo->param->stop && \
+		gettime() - philo->last_eaten > philo->param->t_die)
 		{
-			philo->is_alive = 0;
 			display(philo, 5);
+			pthread_mutex_unlock(&philo->p_eat);
+			return (NULL);
 		}
 		pthread_mutex_unlock(&philo->p_eat);
 		usleep(100);
@@ -32,44 +33,34 @@ static void	*check_die(void *arg)
 	return (NULL);
 }
 
-static void	*check_count(void *arg)
+static int	check_count(void *arg)
 {
-	int		i;
-	int		count;
-	t_param	*param;
+	t_philo	*philo;
 
-	param = arg;
-	count = 0;
-	while (count < param->nb_ph && !param->stop)
+	philo = arg;
+	if (philo->eat_count >= philo->param->nb_eat)
+		philo->param->count++;
+	if (philo->param->count == philo->param->nb_ph)
 	{
-		i = 0;
-		count = 0;
-		while (i < param->nb_ph)
-		{
-			if (param->philo[i].eat_count >= param->nb_eat)
-				count++;
-			i++;
-		}
+		display(philo, 6);
+		return (1);
 	}
-	display(&param->philo[0], 6);
-	return (NULL);
+	return (0);
 }
 
 static void	*actions(void *arg)
 {
 	t_philo		*philo;
-	pthread_t	thd;
 
 	philo = arg;
 	philo->last_eaten = gettime();
-	if (pthread_create(&thd, NULL, check_die, arg))
-		return ((void*)1);
-	pthread_detach(thd);
 	while (!philo->param->stop)
 	{
 		take_fork(philo);
 		eat(philo);
 		leave_fork(philo);
+		if (philo->param->nb_eat > 0 && check_count(philo))
+			return (NULL);
 		sleeping(philo);
 		display(philo, 4);
 	}
@@ -78,23 +69,25 @@ static void	*actions(void *arg)
 
 static int	start_threads(t_param *param)
 {
-	int	i;
+	int			i;
+	pthread_t	thd;
 
 	i = 0;
 	param->init_time = gettime();
 	while (i < param->nb_ph)
 	{
-		if (pthread_create(&param->thd, NULL, actions, (void*)&param->philo[i]))
+		if (pthread_create(&thd, NULL, actions, (void*)&param->philo[i]))
 			return (1);
-		usleep(100);
+		pthread_detach(thd);
+		if (pthread_create(&param->philo[i].thd_ph, NULL, &check_die, \
+		(void*)&param->philo[i]))
+			return (1);
+		usleep(1000);
 		i++;
 	}
-	if (param->nb_eat > 0)
-	{
-		if (pthread_create(&param->thd, NULL, check_count, (void*)param))
-			return (1);
-	}
-	pthread_join(param->thd, NULL);
+	i = 0;
+	while (i < param->nb_ph)
+		pthread_join(param->philo[i++].thd_ph, NULL);
 	return (0);
 }
 

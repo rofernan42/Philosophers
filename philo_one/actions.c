@@ -22,12 +22,10 @@ void	take_fork(t_philo *ph)
 
 void	eat(t_philo *ph)
 {
-	ph->is_eating = 1;
 	display(ph, 2);
 	ph->last_eaten = gettime();
 	pthread_mutex_lock(&ph->p_eat);
 	usleep(ph->param->t_eat * 1000);
-	ph->is_eating = 0;
 	ph->eat_count++;
 	pthread_mutex_unlock(&ph->p_eat);
 }

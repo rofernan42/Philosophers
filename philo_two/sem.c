@@ -39,7 +39,8 @@ int		create_sem(t_philo *philo, int i)
 	if (!(philo->sem_name = sem_n("sem_p_eat", i)))
 		return (1);
 	sem_unlink(philo->sem_name);
-	if ((philo->p_eat = sem_open(philo->sem_name, O_CREAT, 0644, 1)) == SEM_FAILED)
+	if ((philo->p_eat = sem_open(philo->sem_name, O_CREAT, 0644, 1)) \
+	== SEM_FAILED)
 		return (1);
 	return (0);
 }

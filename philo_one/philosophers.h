@@ -23,13 +23,12 @@
 typedef struct		s_philo
 {
 	int				i;
-	int				is_alive;
-	int				is_eating;
 	int				last_eaten;
 	int				eat_count;
 	int				l_fork;
 	int				r_fork;
 	pthread_mutex_t	p_eat;
+	pthread_t		thd_ph;
 	struct s_param	*param;
 }					t_philo;
 
@@ -42,8 +41,8 @@ typedef struct		s_param
 	int				nb_eat;
 	int				init_time;
 	int				stop;
+	int				count;
 	t_philo			*philo;
-	pthread_t		thd;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	disp;
 }					t_param;

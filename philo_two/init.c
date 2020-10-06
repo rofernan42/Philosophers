@@ -21,8 +21,6 @@ static int	init_philo(t_param *param)
 	{
 		memset(&param->philo[i], 0, sizeof(t_philo));
 		param->philo[i].i = i;
-		param->philo[i].is_alive = 1;
-		param->philo[i].is_eating = 0;
 		param->philo[i].eat_count = 0;
 		param->philo[i].param = param;
 		if (create_sem(&param->philo[i], i))

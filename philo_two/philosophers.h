@@ -25,8 +25,6 @@
 typedef struct		s_philo
 {
 	int				i;
-	int				is_alive;
-	int				is_eating;
 	int				last_eaten;
 	int				eat_count;
 	char			*sem_name;
