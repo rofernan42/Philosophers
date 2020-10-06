@@ -29,7 +29,6 @@ typedef struct		s_philo
 {
 	int				i;
 	int				is_alive;
-	int				is_eating;
 	int				last_eaten;
 	int				eat_count;
 	sem_t			*p_eat;
@@ -46,11 +45,9 @@ typedef struct		s_param
 	int				t_sleep;
 	int				nb_eat;
 	int				init_time;
-	int				stop;
 	t_philo			*philo;
 	sem_t			*forks;
 	sem_t			*disp;
-	sem_t			*order;
 	pid_t			pid_count;
 }					t_param;
 

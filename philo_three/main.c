@@ -20,8 +20,7 @@ static void	*check_die(void *arg)
 	while (philo->is_alive)
 	{
 		sem_wait(philo->p_eat);
-		if (!philo->is_eating \
-		&& gettime() - philo->last_eaten > philo->param->t_die)
+		if (gettime() - philo->last_eaten > philo->param->t_die)
 		{
 			philo->is_alive = 0;
 			display(philo, 5);
