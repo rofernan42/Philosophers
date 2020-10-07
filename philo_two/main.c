@@ -76,6 +76,7 @@ static int	start_threads(t_param *param)
 	param->init_time = gettime();
 	while (i < param->nb_ph)
 	{
+		param->philo[i].last_eaten = gettime();
 		if (pthread_create(&thd, NULL, &actions, &param->philo[i]))
 			return (1);
 		pthread_detach(thd);
