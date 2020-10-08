@@ -13,19 +13,19 @@ This project comes from the [Dining Philosophers Problem](https://en.wikipedia.o
 * the simulation stops when a philosopher dies.
 * we can't have more than 10 milliseconds between the death of a philosopher and the printing of his death.
 ## Philo_one
-Use of threads and mutex.
-One fork between each philosopher, each fork being represented by a mutex.
-One thread per philosopher.
+- Use of threads and mutex.
+- One fork between each philosopher, each fork being represented by a mutex.
+- One thread per philosopher.
 ## Philo_two
-Use of threads and semaphores.
-All the forks are in the middle of the table.
-The number of available forks is represented by a semaphore.
-One thread per philosopher.
+- Use of threads and semaphores.
+- All the forks are in the middle of the table.
+- The number of available forks is represented by a semaphore.
+- One thread per philosopher.
 ## Philo_three
-Use of processes and semaphores.
-All the forks are in the middle of the table.
-The number of available forks is represented by a semaphore.
-One process per philosopher.
+- Use of processes and semaphores.
+- All the forks are in the middle of the table.
+- The number of available forks is represented by a semaphore.
+- One process per philosopher.
 ## Compilation
 ```
 make
