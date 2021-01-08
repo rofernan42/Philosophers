@@ -1,4 +1,4 @@
-# Philosophers
+# Philosophers (42 project)
 ## Summary
 The aim of this project is to learn the basics of threading a process and how to work on the same memory space, and learn how to use mutex, semaphores and shared memory.
 ## Rules
